@@ -2,7 +2,7 @@
 
 ## 專案概述
 
-本專案是一個使用PokéAPI v2實現Pokédex的iOS應用程式。該應用程式允許用戶瀏覽Pokémon列表，查看每個Pokémon的詳細訊息，並標記他們最喜歡的Pokémon。
+本專案是一個使用PokéAPI v2實現Pokédex的iOS應用程式，該應用程式允許用戶瀏覽Pokémon列表，查看每個Pokémon的詳細訊息，並標記他們最喜歡的Pokémon
 
 ## 主要功能
 
