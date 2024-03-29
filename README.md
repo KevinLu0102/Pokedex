@@ -46,7 +46,7 @@
 4. 開啟Pokedex.xcworkspace
 5. 選擇上方Product -> Run，即可在模擬器或連接的iOS設備上運行應用程式
 
-## 使用的設計模式
+## 設計模式
 
 Pokédex iOS應用程式使用到以下設計模式：
 
@@ -72,7 +72,7 @@ Pokédex iOS應用程式使用到以下設計模式：
 - 視覺化的Stats數據：根據每個Pokémon的基礎統計數據，動態計算和設置Stats背景的高度，提供了直觀的數據展示方式
 - 未收藏畫面：當切換收藏狀態時，無資料時顯示You haven't collected any Pokémon yet，避免使用者認為程式讀取資料失敗
 
-## 語言模型輔助
+## AI輔助
 
 在開發Pokédex iOS應用程式期間，我使用Claude來協助開發：
 
