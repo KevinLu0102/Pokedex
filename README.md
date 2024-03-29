@@ -2,7 +2,7 @@
 
 ## 專案概述
 
-本專案是一個使用PokéAPI v2實現 Pokédex 的 iOS 應用程式，該應用程式允許用戶瀏覽 Pokémon 列表，查看每個 Pokémon 的詳細訊息，並標記他們最喜歡的 Pokémon
+本專案是一個使用 PokéAPI v2 實現 Pokédex 的 iOS 應用程式，該應用程式允許用戶瀏覽 Pokémon 列表，查看每個 Pokémon 的詳細訊息，並標記他們最喜歡的 Pokémon
 
 ## 主要功能
 
@@ -72,7 +72,7 @@ Pokédex iOS 應用程式使用到以下設計模式：
 - 視覺化的 Stats 數據：根據每個 Pokémon 的基礎統計數據，動態計算和設置 Stats 背景的高度，提供了直觀的數據展示方式
 - 未收藏畫面：當切換收藏狀態時，無資料時顯示 You haven't collected any Pokémon yet，避免使用者認為程式讀取資料失敗
 
-## LLM輔助
+## LLM 輔助
 
 在開發 Pokédex iOS 應用程式期間，我使用 Claude 來協助開發：
 
