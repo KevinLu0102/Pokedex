@@ -1,6 +1,6 @@
 # Pokédex iOS App
 
-## Project Overview
+## Overview
 
 This project is an iOS application that implements a Pokédex using the PokéAPI v2. The application allows users to browse a list of Pokémon, view detailed information about each Pokémon, and mark their favorite Pokémon.
 
