@@ -21,7 +21,7 @@ For the Traditional Chinese version of the README, please see [README-zh-TW.md](
 - Name
 - Type
 - Image
-- Evolution chain, clicking on a Pokémon in the evolution chain should take the user to its detail page
+- Evolution chain, clicking on a Pokémon in the evolution chain take the user to its detail page
 - Base stats
 - Pokémon description
 - Allow users to mark/unmark a Pokémon as a "favorite"
