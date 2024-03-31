@@ -1,6 +1,6 @@
 # Pokédex iOS App
 
-## 專案概述
+## 概述
 
 本專案是一個使用 PokéAPI v2 實現 Pokédex 的 iOS 應用程式，該應用程式允許用戶瀏覽 Pokémon 列表，查看每個 Pokémon 的詳細訊息，並標記他們最喜歡的 Pokémon
 
