@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+struct Constants {
+    struct TableViewCell {
+        static let pokedexCell = "PokedexTableViewCell"
+    }
+    
+    struct CollectionViewCell {
+        static let pokedexCell = "PokedexCollectionViewCell"
+        static let evolutionCell = "EvolutionCollectionViewCell"
+        static let statCell = "StatCollectionViewCell"
+    }
+}

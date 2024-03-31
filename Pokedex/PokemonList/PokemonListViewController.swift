@@ -47,14 +47,14 @@ class PokemonListViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = 100
-        tableView.register(UINib(nibName: "PokedexTableViewCell", bundle: nil), forCellReuseIdentifier: "PokedexTableViewCell")
+        tableView.register(UINib(nibName: "PokedexTableViewCell", bundle: nil), forCellReuseIdentifier: Constants.TableViewCell.pokedexCell)
     }
     
     private func initCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
-        collectionView.register(UINib(nibName: "PokedexCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "PokedexCollectionViewCell")
+        collectionView.register(UINib(nibName: Constants.CollectionViewCell.pokedexCell, bundle: nil), forCellWithReuseIdentifier: "PokedexCollectionViewCell")
     }
     
     private func initEmptyFavoriteView() {
@@ -114,7 +114,7 @@ extension PokemonListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PokedexTableViewCell", for: indexPath) as! PokedexTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.TableViewCell.pokedexCell, for: indexPath) as! PokedexTableViewCell
         let pokedex = viewModel.getPokedexForCell(at: indexPath)
         cell.configure(with: pokedex)
         return cell
@@ -140,7 +140,7 @@ extension PokemonListViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PokedexCollectionViewCell", for: indexPath) as! PokedexCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCell.pokedexCell, for: indexPath) as! PokedexCollectionViewCell
         let pokedex = viewModel.getPokedexForCell(at: indexPath)
         cell.configure(with: pokedex)
         return cell

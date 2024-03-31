@@ -78,7 +78,7 @@ class PokemonDetailViewController: UIViewController {
     }
     
     private func initEvolutionsCollectionView() {
-        evolutionsCollectionView.register(UINib(nibName: "EvolutionCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "EvolutionCollectionViewCell")
+        evolutionsCollectionView.register(UINib(nibName: "EvolutionCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: Constants.CollectionViewCell.evolutionCell)
         evolutionsCollectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
         evolutionsCollectionView.dataSource = self
         evolutionsCollectionView.delegate = self
@@ -91,7 +91,7 @@ class PokemonDetailViewController: UIViewController {
     }
     
     private func initStatsCollectionView() {
-        statsCollectionView.register(UINib(nibName: "StatCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "StatCollectionViewCell")
+        statsCollectionView.register(UINib(nibName: "StatCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: Constants.CollectionViewCell.statCell)
         statsCollectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
         statsCollectionView.dataSource = self
         statsCollectionView.delegate = self
@@ -131,7 +131,7 @@ extension PokemonDetailViewController: UICollectionViewDataSource, UICollectionV
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == statsCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "StatCollectionViewCell", for: indexPath) as! StatCollectionViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCell.statCell, for: indexPath) as! StatCollectionViewCell
             if let stat = viewModel.getStat(index: indexPath.row) {
                 let cellHeight = cell.contentView.bounds.height
                 let statHeight = viewModel.getStatBackgroundHeight(for: stat, cellHeight: cellHeight)
@@ -139,7 +139,7 @@ extension PokemonDetailViewController: UICollectionViewDataSource, UICollectionV
             }
             return cell
         } else if collectionView == evolutionsCollectionView {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EvolutionCollectionViewCell", for: indexPath) as! EvolutionCollectionViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCell.evolutionCell, for: indexPath) as! EvolutionCollectionViewCell
             let isLastCell = (indexPath.item == collectionView.numberOfItems(inSection: indexPath.section) - 1)
             cell.configure(evolutionSpecies: viewModel.getEvolutionSpecies(index: indexPath.row), isLastCell: isLastCell)
             return cell
