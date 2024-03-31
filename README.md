@@ -8,8 +8,8 @@
 
 **Pokémon 列表**：
   - 顯示基本訊息
-  - 點擊列表項將用戶帶到 Pokémon 詳情頁面
-  - 當用戶滾動到列表末尾時，實現自動加載更多 Pokémon 數據
+  - 點擊列表項目將用戶帶到 Pokémon 詳情頁面
+  - 當用戶滑動到底部時，自動加載更多 Pokémon 數據
   - 實現過濾器，僅顯示用戶收藏的 Pokémon
 
  **Pokémon 詳情**：
@@ -19,11 +19,12 @@
   - 圖像
   - 進化鏈，點擊進化鏈中的 Pokémon 應將用戶帶到其詳情頁面
   - 基礎統計數據
-  - 圖鑑描述文本
+  - Pokémon 描述
   - 允許用戶將 Pokémon 標記/取消標記為"收藏"
 
 ## 附加功能
   - 以 List 和 Grid 兩種格式顯示 Pokémon 列表
+  - 網路請求Cache，增加載入速度
 
 ## 開發環境
   - Xcode 15.2
@@ -65,6 +66,7 @@ Pokédex iOS 應用程式使用到以下設計模式：
 - 可重用的自定義視圖：EmptyFavoriteView、HeaderView，當其他部分的程式碼需要顯示類似的畫面時，可以直接實例化使用
 - 統一的資料接口：在 PokémonListViewController中，無論是 List 或 Grid 都使用了 viewModel 裡同一筆資料，避免重複編寫相同的數據獲取邏輯
 - 數據可用性：在 PokémonDetailViewModel中的 loadPokémonDetail，提高數據的可用性，避免因單個 API 請求失敗而導致整個頁面無法顯示的情況，用戶仍然可以看到已成功獲取的資料
+- 集中管理 Identifier：在 Constants Struct 中定義了所有的 Cell Identifier，目的是不需要在多個地方進行修改，降低手動輸入錯誤
 
 為了提高使用者體驗，在開發過程中我進行了以下內容：
 
@@ -74,18 +76,14 @@ Pokédex iOS 應用程式使用到以下設計模式：
 
 ## LLM 輔助
 
-在開發 Pokédex iOS 應用程式期間，我使用 Claude 來協助開發：
+為了加速開發，在開發過程中，它幫我做了什麼：
 
-它幫我做了什麼：
-- 請幫我產生 APIService ，提供我在開發時，能在任一處使用
-- 請幫我產生 FavoriteService ，統一管理收藏的資料
-- 請幫我產生網路請求失敗的 Enum ，我想要有自定義的錯誤描述
-- 請幫我產生 TableView 滑動到底部時出現加載的動畫，並且包含關閉功能
-- 請幫我產生一個未收藏狀態的 View ，在需要的地方可以直接實體化使用
-- 請幫我產生可以依據 viewModel 的收藏狀態，來顯示星星符號的不同樣式跟顏色
-- 請幫我產生 Struct ，這是我的 API 回傳 JSON 資料
-- 請幫我 Code Review 有哪些地方可以改善
-- 請幫我使用MARK註解分類，易於搜尋管理
-
-
-
+- 產生 APIService ，提供我在開發時，能在任一處使用
+- 產生 FavoriteService ，統一管理收藏的資料
+- 產生網路請求失敗的 Enum ，有自定義的錯誤描述
+- 產生 TableView 滑動到底部時出現加載的動畫，並且包含關閉功能
+- 產生一個未收藏狀態的 View ，在需要的地方可以直接實體化使用
+- 產生可以依據 viewModel 的收藏狀態，來顯示星星符號的不同樣式跟顏色
+- 產生 依據 API JSON 資料的 Struct
+- Code Review
+- 使用MARK註解分類，易於搜尋管理
