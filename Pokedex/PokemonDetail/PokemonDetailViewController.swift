@@ -32,10 +32,8 @@ class PokemonDetailViewController: UIViewController {
         
         showLoadingIndicator()
         viewModel.loadPokemonDetail(url: pokemonURL) { [weak self] in
-            DispatchQueue.main.async{
-                self?.setDatailUI()
-                self?.hideLoadingIndicator()
-            }
+            self?.setDatailUI()
+            self?.hideLoadingIndicator()
         }
     }
     
