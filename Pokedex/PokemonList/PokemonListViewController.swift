@@ -22,25 +22,50 @@ class PokemonListViewController: UIViewController {
         initTableView()
         initCollectionView()
         initEmptyFavoriteView()
-        loadPokemons()
+        binding()
+        viewModel.loadPokemons()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if favoriteSwitch.isOn {
-            tableView.reloadData()
-            collectionView.reloadData()
-            updateEmptyFavoriteView()
-        }
+        viewModel.checkFavoriteStatus()
     }
     
     // MARK: - Private Methods
-    private func loadPokemons() {
-        viewModel.loadPokemons { [weak self] in
+    private func binding() {
+        viewModel.didLoadPokemons = { [weak self] in
             self?.tableView.reloadData()
             self?.collectionView.reloadData()
-            self?.hideLoadingIndicator()
         }
+        
+        viewModel.loadingStatus = { [weak self] isLoading in
+            if isLoading {
+                self?.showLoadingIndicator()
+            } else {
+                self?.hideLoadingIndicator()
+            }
+        }
+        
+        viewModel.favoriteStatus = { [weak self] in
+            self?.tableView.reloadData()
+            self?.collectionView.reloadData()
+        }
+        
+        viewModel.displayStatus = { [weak self] style in
+            switch style {
+            case.List:
+                self?.tableView.isHidden = false
+                self?.collectionView.isHidden = true
+            case.Grid:
+                self?.tableView.isHidden = true
+                self?.collectionView.isHidden = false
+            }
+        }
+        
+        viewModel.emptyFavoriteStatus = { [weak self] isEmpty in
+            self?.emptyFavoriteView.isHidden = !isEmpty
+        }
+        
     }
     
     private func initTableView() {
@@ -69,10 +94,6 @@ class PokemonListViewController: UIViewController {
         emptyFavoriteView.isHidden = true
     }
     
-    private func updateEmptyFavoriteView() {
-        emptyFavoriteView.isHidden = !(favoriteSwitch.isOn && viewModel.pokemonFavorite.isEmpty)
-    }
-    
     private func showPokemonDetail(pokedex: Pokedex) {
         let pokemonDetailViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PokemonDetailViewController") as! PokemonDetailViewController
         pokemonDetailViewController.pokemonURL = pokedex.pokemonURL
@@ -95,14 +116,10 @@ class PokemonListViewController: UIViewController {
     // MARK: - IBActions
     @IBAction func favoriteSwitchAction(_ sender: UISwitch) {
         viewModel.isFavoriteMode = sender.isOn
-        tableView.reloadData()
-        collectionView.reloadData()
-        updateEmptyFavoriteView()
     }
     
     @IBAction func styleSegmentedControlValueChanged(_ sender: UISegmentedControl) {
-        tableView.isHidden = sender.selectedSegmentIndex == 1
-        collectionView.isHidden = sender.selectedSegmentIndex == 0
+        viewModel.displayStyle = sender.selectedSegmentIndex == 0 ? .List : .Grid
     }
 }
 
@@ -125,11 +142,8 @@ extension PokemonListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard !favoriteSwitch.isOn && indexPath.row == viewModel.pokedex.count - 1 else { return }
-        showLoadingIndicator()
-        loadPokemons()
+        viewModel.loadMore(currentRow: indexPath.row)
     }
-    
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
@@ -151,9 +165,7 @@ extension PokemonListViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard !favoriteSwitch.isOn else { return }
-        let lastIndexPath = IndexPath(item: viewModel.pokedex.count - 1, section: 0)
-        if indexPaths.contains(lastIndexPath) { loadPokemons()}
+        viewModel.prefetch(indexPaths: indexPaths)
     }
     
 }

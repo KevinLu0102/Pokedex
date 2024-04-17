@@ -10,13 +10,40 @@ import Foundation
 class PokemonListViewModel {
     private var currentOffset = 0
     private let limit = 20
-    private var isLoading = false
-    var isFavoriteMode: Bool = false
     var pokedex = [Pokedex]()
-    
     var pokemonFavorite: [Pokedex] {
         return FavoriteService.shared.getFavoritePokemon()
     }
+    var didLoadPokemons: (() -> Void)?
+    
+    var displayStyle: DisplayStyle = .List {
+        didSet {
+            displayStatus?(displayStyle)
+        }
+    }
+    var displayStatus: ((DisplayStyle) -> Void)?
+    
+    var isLoading: Bool = false {
+        didSet {
+            loadingStatus?(isLoading)
+        }
+    }
+    var loadingStatus: ((Bool) -> Void)?
+    
+    var isFavoriteMode: Bool = false {
+        didSet {
+            favoriteStatus?()
+            isFavoriteEmpty = isFavoriteMode && pokemonFavorite.isEmpty
+        }
+    }
+    var favoriteStatus: (() -> Void)?
+    
+    var isFavoriteEmpty: Bool = false {
+        didSet {
+            emptyFavoriteStatus?(isFavoriteEmpty)
+        }
+    }
+    var emptyFavoriteStatus: ((Bool) -> Void)?
     
     func getNumberOfItems() -> Int {
         if isFavoriteMode {
@@ -42,7 +69,32 @@ class PokemonListViewModel {
         }
     }
     
-    func loadPokemons(completion: @escaping () -> Void) {
+    func checkFavoriteStatus() {
+        if isFavoriteMode {
+            favoriteStatus?()
+            emptyFavoriteStatus?(pokemonFavorite.isEmpty)
+        }
+    }
+    
+    func loadMore(currentRow: Int) {
+        if isFavoriteMode{
+            return
+        }else{
+            guard currentRow == pokedex.count - 1 else { return }
+            loadPokemons()
+        }
+    }
+    
+    func prefetch(indexPaths: [IndexPath]) {
+        if isFavoriteMode{
+            return
+        }else{
+            let lastIndexPath = IndexPath(item: pokedex.count - 1, section: 0)
+            if indexPaths.contains(lastIndexPath) { loadPokemons() }
+        }
+    }
+    
+    func loadPokemons() {
         guard !isLoading else { return }
         
         isLoading = true
@@ -75,12 +127,12 @@ class PokemonListViewModel {
                     }
                     self.currentOffset += self.limit
                     self.isLoading = false
-                    completion()
+                    
+                    self.didLoadPokemons?()
                 }
                 
             case .failure(let failure):
                 self.isLoading = false
-                completion()
                 print(failure.localizedDescription)
             }
         }
