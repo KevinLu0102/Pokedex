@@ -47,7 +47,7 @@ For the Traditional Chinese version of the README, please see [README-zh-TW.md](
 
 ## Installing the Application
 
-To use the Pokédex iOS application, follow these steps:
+To run the Pokédex iOS application, follow these steps:
 
 1. Open Xcode, select Integrate -> Clone from the top menu -> Paste the URL
 
