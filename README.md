@@ -10,10 +10,10 @@ For the Traditional Chinese version of the README, please see [README-zh-TW.md](
 
 **Pokémon List**:
 
-- Display basic information
-- Clicking on a list item takes the user to the Pokémon detail page
-- Automatically load more Pokémon data when the user scrolls to the bottom
-- Implement a filter to show only the user's favorite Pokémon
+- Displays basic information
+- Clicking on a list item takes the user to the Pokémon details page
+- Automatically loads more Pokémon data when the user scrolls to the bottom
+- Implements a filter to show only the user's favorite Pokémon
 
 **Pokémon Detail**:
 
@@ -21,15 +21,15 @@ For the Traditional Chinese version of the README, please see [README-zh-TW.md](
 - Name
 - Type
 - Image
-- Evolution chain, clicking on a Pokémon in the evolution chain take the user to its detail page
+- Evolution chain, clicking on a Pokémon in the evolution chain takes the user to its detail page
 - Base stats
 - Pokémon description
 - Allow users to mark/unmark a Pokémon as a "favorite"
 
 ## Additional Features
 
-- Display the Pokémon list in both List and Grid formats
-- Cache network requests to increase loading speed
+- Displays the Pokémon list in both List and Grid formats
+- Caches network requests to increase loading speed
 
 ## Development Environment
 
@@ -65,13 +65,13 @@ The Pokédex iOS application utilizes the following design patterns:
 
 - MVVM: The application follows the MVVM architectural pattern, separating data models, UI components, and business logic into different layers
 
-- Singleton: The APIService and FavoriteService classes are implemented as singletons to provide a single instance for making API calls and managing favorite Pokémon throughout the application
+- Singleton: The APIService and FavoriteService classes are implemented as singletons to provide a single instance for making API calls and managing favorite Pokémons throughout the application
 
 - Delegate: The application uses the delegate pattern to handle data for List and Grid
 
 ## About the Code
 
-To improve code readability, maintainability, and extensibility, I did the following during development:
+The following were implemented to improve code readability, maintainability, and extensibility:
 
 - Custom error handling: Defined custom error types NetworkError using Enum in APIService, covering various possible error scenarios and providing more explicit and meaningful error messages for easier error handling and testing
 
@@ -89,7 +89,7 @@ To improve code readability, maintainability, and extensibility, I did the follo
 
 - Centralized management of Identifiers: Defined all Cell Identifiers in the Constants Struct to avoid needing modifications in multiple places and reduce manual input errors
 
-To enhance the user experience, I did the following during development:
+The following were implemented to enhance the user experience:
 
 - Show loading animation when loading more: When scrolling to the bottom triggers loading more data, show a loading animation to provide visual feedback that the application is fetching data
 
@@ -115,6 +115,6 @@ To accelerate development, here's what it helped me with during the development 
 
 - Generated Structs based on API JSON data
 
-- Provided code review
+- Code review was conducted
 
 - Used MARK comments for categorization, easy to search and manage
