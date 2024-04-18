@@ -46,10 +46,13 @@ class PokemonListViewModel {
     }
     var emptyFavoriteStatus: ((Bool) -> Void)?
     
+    
+    // MARK: - Initialization
     init(apiService: APIServiceProtocol) {
         self.apiService = apiService
     }
     
+    // MARK: - Data Access
     func getNumberOfItems() -> Int {
         if isFavoriteMode {
             return pokemonFavorite.count
@@ -74,6 +77,7 @@ class PokemonListViewModel {
         }
     }
     
+    // MARK: - Favorite Handling
     func checkFavoriteStatus() {
         if isFavoriteMode {
             favoriteStatus?()
@@ -81,6 +85,7 @@ class PokemonListViewModel {
         }
     }
     
+    // MARK: - Data Loading
     func loadMore(currentRow: Int) {
         if isFavoriteMode{
             return
