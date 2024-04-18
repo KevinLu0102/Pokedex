@@ -13,7 +13,7 @@ class PokemonListViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var styleSegmentedControl: UISegmentedControl!
     private let emptyFavoriteView = EmptyFavoriteView()
-    private let viewModel = PokemonListViewModel()
+    private let viewModel = PokemonListViewModel(apiService: APIService.shared)
     
     // MARK: - View Lifecycle
     override func viewDidLoad() {

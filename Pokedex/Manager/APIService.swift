@@ -7,7 +7,11 @@
 
 import Foundation
 
-class APIService {
+protocol APIServiceProtocol {
+    func callAPI<T: Decodable>(url: String, completion: @escaping (Result<T, NetworkError>) -> Void)
+}
+
+class APIService: APIServiceProtocol {
     static let shared = APIService()
     
     private init() {}

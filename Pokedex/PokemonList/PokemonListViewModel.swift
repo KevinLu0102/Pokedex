@@ -10,6 +10,7 @@ import Foundation
 class PokemonListViewModel {
     private var currentOffset = 0
     private let limit = 20
+    private let apiService: APIServiceProtocol
     var pokedex = [Pokedex]()
     var pokemonFavorite: [Pokedex] {
         return FavoriteService.shared.getFavoritePokemon()
@@ -44,6 +45,10 @@ class PokemonListViewModel {
         }
     }
     var emptyFavoriteStatus: ((Bool) -> Void)?
+    
+    init(apiService: APIServiceProtocol) {
+        self.apiService = apiService
+    }
     
     func getNumberOfItems() -> Int {
         if isFavoriteMode {
@@ -100,7 +105,7 @@ class PokemonListViewModel {
         isLoading = true
         
         let url = "https://pokeapi.co/api/v2/pokemon?offset=\(currentOffset)&limit=\(limit)"
-        APIService.shared.callAPI(url: url) { (result: Result<Pagination, NetworkError>) in
+        apiService.callAPI(url: url) { (result: Result<Pagination, NetworkError>) in
             switch result {
             case .success(let success):
                 let group = DispatchGroup()
@@ -108,7 +113,7 @@ class PokemonListViewModel {
                 
                 for (index, pokedex) in success.results.enumerated() {
                     group.enter()
-                    APIService.shared.callAPI(url: pokedex.url) { (result: Result<Pokemon, NetworkError>) in
+                    self.apiService.callAPI(url: pokedex.url) { (result: Result<Pokemon, NetworkError>) in
                         switch result {
                         case .success(let data):
                             tempPokemons[index] = data
