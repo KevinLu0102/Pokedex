@@ -8,14 +8,14 @@ For the Traditional Chinese version of the README, please see [README-zh-TW.md](
 
 ## Main Features
 
-**Pokémon List**:
+**Pokémon List**
 
 - Displays basic information
 - Clicking on a list item takes the user to the Pokémon details page
 - Automatically loads more Pokémon data when the user scrolls to the bottom
 - Implements a filter to show only the user's favorite Pokémon
 
-**Pokémon Detail**:
+**Pokémon Detail**
 
 - PokémonID
 - Name
@@ -47,7 +47,7 @@ For the Traditional Chinese version of the README, please see [README-zh-TW.md](
 
 ## Installing the Application
 
-To run the Pokédex iOS application, follow these steps:
+To run the Pokédex iOS application, follow these steps
 
 1. Open Xcode, select Integrate -> Clone from the top menu -> Paste the URL
 
@@ -61,7 +61,7 @@ To run the Pokédex iOS application, follow these steps:
 
 ## Design Patterns
 
-The Pokédex iOS application utilizes the following design patterns:
+The Pokédex iOS application utilizes the following design patterns
 
 - MVVM  
   The application follows the MVVM architectural pattern, separating data models, UI components, and business logic into different layers
@@ -74,7 +74,7 @@ The Pokédex iOS application utilizes the following design patterns:
 
 ## About the Code
 
-The following were implemented to improve code readability, maintainability, and extensibility:
+**The following were implemented to improve code readability, maintainability, and extensibility**
 
 - Custom error handling  
   Defined custom error types NetworkError using Enum in APIService, covering various possible error scenarios and providing more explicit and meaningful error messages for easier error handling and testing
@@ -100,7 +100,7 @@ The following were implemented to improve code readability, maintainability, and
 - Centralized management of Identifiers  
   Defined all Cell Identifiers in the Constants Struct to avoid needing modifications in multiple places and reduce manual input errors
 
-The following were implemented to enhance the user experience:
+**The following were implemented to enhance the user experience**
 
 - Show loading animation when loading more  
   When scrolling to the bottom triggers loading more data, show a loading animation to provide visual feedback that the application is fetching data
