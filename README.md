@@ -111,6 +111,10 @@ The Pokédex iOS application utilizes the following design patterns
 - No favorites screen  
   When switching favorite status, display "You haven't collected any Pokémon yet" when there is no data, to avoid users thinking data loading failed
 
+**Writing Unit Tests**
+- PokemonListViewModel:  
+  Test the loadPokemons() method to ensure it correctly loads and parses the data returned from the API
+
 ## LLM Assistance 
 
 To accelerate development, here's what it helped me with during the development process:
