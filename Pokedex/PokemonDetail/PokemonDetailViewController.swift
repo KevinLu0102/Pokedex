@@ -18,8 +18,8 @@ class PokemonDetailViewController: UIViewController {
     @IBOutlet weak var evolutionsCollectionView: UICollectionView!
     @IBOutlet weak var evolutionsCollectionViewHeight: NSLayoutConstraint!
     @IBOutlet weak var favoriteButton: UIButton!
-    private var activityIndicator: UIActivityIndicatorView!
-    private var loadingBackgroundView: UIView!
+    
+    private var loadingView: LoadingView!
     private let viewModel = PokemonDetailViewModel()
     var pokemonURL = ""
     
@@ -29,55 +29,59 @@ class PokemonDetailViewController: UIViewController {
         initStatsCollectionView()
         initEvolutionsCollectionView()
         initLoadingView()
-        
-        showLoadingIndicator()
-        viewModel.loadPokemonDetail(url: pokemonURL) { [weak self] in
-            self?.setDatailUI()
-            self?.hideLoadingIndicator()
-        }
+        binding()
+        viewModel.pokemonURL = self.pokemonURL
+        viewModel.loadPokemonDetail()
     }
     
     // MARK: - Private Methods
-    private func setDatailUI() {
+    private func binding() {
+        viewModel.didLoadPokemon = { [weak self] in
+            self?.setPokemon()
+        }
+        
+        viewModel.didLoadSpecies = { [weak self] in
+            self?.setSpecies()
+        }
+        
+        viewModel.didLoadEvolution = { [weak self] in
+            self?.setEvolution()
+        }
+        
+        viewModel.updateLoadingStatus = { [weak self] isLoading in
+            isLoading ? self?.loadingView.startLoading() : self?.loadingView.stopLoading()
+        }
+    }
+    
+    private func setPokemon() {
         pokemonImageView.sd_setImage(with: viewModel.imageURL)
         pokemonIDLabel.text = viewModel.id
         pokemonNameLabel.text = viewModel.name
         pokemonTypesLabel.text = viewModel.types
         updateFavoriteStatus()
+    }
+    
+    private func setSpecies() {
         statsCollectionView.reloadData()
         setStatsCollectionViewContentSizeHeight()
         descriptionLabel.text = viewModel.description
+    }
+    
+    private func setEvolution() {
         evolutionsCollectionView.reloadData()
         setEvolutionCollectionViewContentSizeHeight()
     }
     
     private func initLoadingView() {
         let navigationBarHeight = navigationController?.navigationBar.frame.height ?? 0
-        let loadingBackgroundFrame = CGRect(x: 0, y: navigationBarHeight,
-                                            width: view.bounds.width,
-                                            height: view.bounds.height - navigationBarHeight)
-        loadingBackgroundView = UIView(frame: loadingBackgroundFrame)
-        loadingBackgroundView.backgroundColor = .white
-        activityIndicator = UIActivityIndicatorView(style: .large)
-        activityIndicator.color = .gray
-        activityIndicator.center = CGPoint(x: loadingBackgroundView.bounds.midX,
-                                           y: loadingBackgroundView.bounds.midY)
-        loadingBackgroundView.addSubview(activityIndicator)
-    }
-    
-    private func showLoadingIndicator() {
-        view.addSubview(loadingBackgroundView)
-        activityIndicator.startAnimating()
-    }
-        
-    private func hideLoadingIndicator() {
-        loadingBackgroundView.removeFromSuperview()
-        activityIndicator.stopAnimating()
+        let loadingBackgroundFrame = CGRect(x: 0, y: navigationBarHeight, width: view.bounds.width, height: view.bounds.height - navigationBarHeight)
+        loadingView = LoadingView(frame: loadingBackgroundFrame)
+        view.addSubview(loadingView)
     }
     
     private func initEvolutionsCollectionView() {
-        evolutionsCollectionView.register(UINib(nibName: "EvolutionCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: Constants.CollectionViewCell.evolutionCell)
-        evolutionsCollectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
+        evolutionsCollectionView.register(UINib(nibName: Constants.CollectionViewCell.evolutionCell, bundle: nil), forCellWithReuseIdentifier: Constants.CollectionViewCell.evolutionCell)
+        evolutionsCollectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.headerView)
         evolutionsCollectionView.dataSource = self
         evolutionsCollectionView.delegate = self
         evolutionsCollectionView.isScrollEnabled = false
@@ -89,8 +93,8 @@ class PokemonDetailViewController: UIViewController {
     }
     
     private func initStatsCollectionView() {
-        statsCollectionView.register(UINib(nibName: "StatCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: Constants.CollectionViewCell.statCell)
-        statsCollectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderView")
+        statsCollectionView.register(UINib(nibName: Constants.CollectionViewCell.statCell, bundle: nil), forCellWithReuseIdentifier: Constants.CollectionViewCell.statCell)
+        statsCollectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: Constants.headerView)
         statsCollectionView.dataSource = self
         statsCollectionView.delegate = self
         statsCollectionView.isScrollEnabled = false
@@ -122,7 +126,7 @@ extension PokemonDetailViewController: UICollectionViewDataSource, UICollectionV
         if collectionView == statsCollectionView {
              return viewModel.statsCount
          } else if collectionView == evolutionsCollectionView {
-             return viewModel.evolutionSpecies.count
+             return viewModel.evolutionCount
          }
         return 0
     }
@@ -132,7 +136,8 @@ extension PokemonDetailViewController: UICollectionViewDataSource, UICollectionV
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.CollectionViewCell.statCell, for: indexPath) as! StatCollectionViewCell
             if let stat = viewModel.getStat(index: indexPath.row) {
                 let cellHeight = cell.contentView.bounds.height
-                let statHeight = viewModel.getStatBackgroundHeight(for: stat, cellHeight: cellHeight)
+                let maxStatValue = 255.0
+                let statHeight = CGFloat(stat.baseStat) / maxStatValue * cellHeight
                 cell.configure(with: stat, statHeight: statHeight)
             }
             return cell
@@ -157,7 +162,7 @@ extension PokemonDetailViewController: UICollectionViewDataSource, UICollectionV
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderView", for: indexPath) as! HeaderView
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerView, for: indexPath) as! HeaderView
             if collectionView == statsCollectionView {
                 headerView.configure(with: "Stats")
             } else if collectionView == evolutionsCollectionView {
