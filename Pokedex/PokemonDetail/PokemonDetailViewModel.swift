@@ -8,10 +8,39 @@
 import Foundation
 
 class PokemonDetailViewModel {
-    var pokemonDetail: PokemonDetail?
+    var pokemon: Pokemon? {
+        didSet {
+            didLoadPokemon?()
+        }
+    }
+    var didLoadPokemon: (() -> Void)?
     
+    var species: Species? {
+        didSet {
+           didLoadSpecies?()
+        }
+    }
+    var didLoadSpecies: (() -> Void)?
+    
+    var evolution: Evolution? {
+        didSet {
+           didLoadEvolution?()
+        }
+    }
+    var didLoadEvolution: (() -> Void)?
+    
+    var isLoading: Bool = false {
+        didSet {
+            updateLoadingStatus?(isLoading)
+        }
+    }
+    var updateLoadingStatus: ((Bool) -> Void)?
+    
+    var pokemonURL: String?
+    
+    // MARK: - Computed Properties
     var imageURL: URL? {
-        if let urlString = pokemonDetail?.pokemon?.sprites.frontDefault {
+        if let urlString = pokemon?.sprites.frontDefault {
             return URL(string: urlString)
         } else {
             return nil
@@ -19,7 +48,7 @@ class PokemonDetailViewModel {
     }
     
     var id: String {
-        if let id = pokemonDetail?.pokemon?.id{
+        if let id = pokemon?.id{
             return String(format: "#%04d", id)
         }else{
             return ""
@@ -27,7 +56,7 @@ class PokemonDetailViewModel {
     }
     
     var name: String {
-        if let name = pokemonDetail?.pokemon?.name{
+        if let name = pokemon?.name{
             return name
         }else{
             return ""
@@ -35,7 +64,7 @@ class PokemonDetailViewModel {
     }
     
     var types: String {
-        if let types = pokemonDetail?.pokemon?.types{
+        if let types = pokemon?.types{
             return types.map { $0.type.name }.joined(separator: ", ")
         }else{
             return ""
@@ -43,7 +72,7 @@ class PokemonDetailViewModel {
     }
     
     var description: String {
-        if let species = pokemonDetail?.species {
+        if let species = species {
             return localizedFlavorText(from: species.flavorTextEntries)
         }else{
             return ""
@@ -51,15 +80,19 @@ class PokemonDetailViewModel {
     }
     
     var statsCount: Int {
-        if let count = pokemonDetail?.pokemon?.stats.count {
+        if let count = pokemon?.stats.count {
             return count
         }else{
             return 0
         }
     }
     
+    var evolutionCount: Int {
+        return evolutionSpecies.count
+    }
+    
     var evolutionSpecies: [NameURLPair] {
-        if let evolution = pokemonDetail?.evolution{
+        if let evolution = evolution{
             var species: [NameURLPair] = []
             collectSpecies(from: evolution.chain, into: &species)
             return species
@@ -69,33 +102,24 @@ class PokemonDetailViewModel {
     }
     
     var isFavorite: Bool {
-            if let pokemon = pokemonDetail?.pokemon {
-                return FavoriteService.shared.isFavorite(pokemonId: pokemon.id)
-            } else {
-                return false
-            }
-        }
-    
-    func getStat(index: Int) -> PokemonStat?{
-        if let stat = pokemonDetail?.pokemon?.stats[index]{
-            return stat
-        }else{
-            return nil
+        if let pokemon = pokemon {
+            return FavoriteService.shared.isFavorite(pokemonId: pokemon.id)
+        } else {
+            return false
         }
     }
     
-    func getStatBackgroundHeight(for stat: PokemonStat, cellHeight: CGFloat) -> CGFloat {
-        let maxStatValue = 255.0
-        let height = CGFloat(stat.baseStat) / maxStatValue * cellHeight
-        return height
+    // MARK: - Methods
+    func getStat(index: Int) ->  PokemonStat? {
+        return pokemon?.stats[index]
     }
     
-    func getEvolutionSpecies(index: Int)-> NameURLPair {
+    func getEvolutionSpecies(index: Int) -> NameURLPair{
         return evolutionSpecies[index]
     }
     
     func updateFavoriteData(pokemonURL: String) {
-        if let pokemon = pokemonDetail?.pokemon {
+        if let pokemon = pokemon {
             if FavoriteService.shared.isFavorite(pokemonId: pokemon.id) {
                 FavoriteService.shared.removeFavorite(pokemonId: pokemon.id)
             } else {
@@ -104,34 +128,38 @@ class PokemonDetailViewModel {
         }
     }
     
-    func loadPokemonDetail(url: String, completion: @escaping () -> Void) {
-        pokemonDetail = PokemonDetail()
+    func loadPokemonDetail() {
+        isLoading = true
+        
+        guard let url = pokemonURL else{ return }
+        
         self.loadPokemon(url: url) { pokemon in
             guard let pokemon = pokemon else {
-                completion()
+                self.isLoading = false
                 return
             }
-            self.pokemonDetail?.pokemon = pokemon
+            self.pokemon = pokemon
             
             self.loadSpecies(url: pokemon.species.url) { species in
                 guard let species = species else {
-                    completion()
+                    self.isLoading = false
                     return
                 }
-                self.pokemonDetail?.species = species
+                self.species = species
                 
                 self.loadEvolution(url: species.evolutionChain.url) { evolution in
                     guard let evolution = evolution else {
-                        completion()
+                        self.isLoading = false
                         return
                     }
-                    self.pokemonDetail?.evolution = evolution
-                    completion()
+                    self.evolution = evolution
+                    self.isLoading = false
                 }
             }
         }
     }
     
+    // MARK: - Private Methods
     private func loadPokemon(url: String, completion: @escaping (Pokemon?) -> Void) {
         APIService.shared.callAPI(url: url) { (result: Result<Pokemon, NetworkError>) in
             switch result {
