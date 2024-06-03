@@ -17,4 +17,6 @@ struct Constants {
         static let evolutionCell = "EvolutionCollectionViewCell"
         static let statCell = "StatCollectionViewCell"
     }
+    
+    static let headerView = "HeaderView"
 }
