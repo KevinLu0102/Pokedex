@@ -36,6 +36,13 @@ class PokemonDetailViewModel {
     }
     var updateLoadingStatus: ((Bool) -> Void)?
     
+    var isFavorite: Bool = false {
+        didSet {
+            updateIsFavorite?(isFavorite)
+        }
+    }
+    var updateIsFavorite: ((Bool) -> Void)?
+    
     var pokemonURL: String?
     
     // MARK: - Computed Properties
@@ -101,14 +108,6 @@ class PokemonDetailViewModel {
         }
     }
     
-    var isFavorite: Bool {
-        if let pokemon = pokemon {
-            return FavoriteService.shared.isFavorite(pokemonId: pokemon.id)
-        } else {
-            return false
-        }
-    }
-    
     // MARK: - Methods
     func getStat(index: Int) ->  PokemonStat? {
         return pokemon?.stats[index]
@@ -118,13 +117,20 @@ class PokemonDetailViewModel {
         return evolutionSpecies[index]
     }
     
-    func updateFavoriteData(pokemonURL: String) {
-        if let pokemon = pokemon {
+    func saveFavoritePokemon() {
+        if let pokemon = pokemon, let pokemonURL = pokemonURL {
             if FavoriteService.shared.isFavorite(pokemonId: pokemon.id) {
                 FavoriteService.shared.removeFavorite(pokemonId: pokemon.id)
             } else {
                 FavoriteService.shared.addFavorite(pokemon: Pokedex(id: pokemon.id, name: pokemon.name, types: pokemon.types, imageURL: pokemon.sprites, pokemonURL: pokemonURL))
             }
+            checkIfIsFavorite()
+        }
+    }
+    
+    func checkIfIsFavorite() {
+        if let pokemon = pokemon{
+            isFavorite = FavoriteService.shared.isFavorite(pokemonId: pokemon.id)
         }
     }
     

@@ -29,6 +29,7 @@ class PokemonDetailViewController: UIViewController {
         initStatsCollectionView()
         initEvolutionsCollectionView()
         initLoadingView()
+        initFavoriteButton()
         binding()
         viewModel.pokemonURL = self.pokemonURL
         viewModel.loadPokemonDetail()
@@ -38,6 +39,7 @@ class PokemonDetailViewController: UIViewController {
     private func binding() {
         viewModel.didLoadPokemon = { [weak self] in
             self?.setPokemon()
+            self?.viewModel.checkIfIsFavorite()
         }
         
         viewModel.didLoadSpecies = { [weak self] in
@@ -46,6 +48,10 @@ class PokemonDetailViewController: UIViewController {
         
         viewModel.didLoadEvolution = { [weak self] in
             self?.setEvolution()
+        }
+        
+        viewModel.updateIsFavorite = { [weak self] isFavorite in
+            self?.favoriteButton.isSelected = isFavorite
         }
         
         viewModel.updateLoadingStatus = { [weak self] isLoading in
@@ -58,7 +64,6 @@ class PokemonDetailViewController: UIViewController {
         pokemonIDLabel.text = viewModel.id
         pokemonNameLabel.text = viewModel.name
         pokemonTypesLabel.text = viewModel.types
-        updateFavoriteStatus()
     }
     
     private func setSpecies() {
@@ -105,17 +110,16 @@ class PokemonDetailViewController: UIViewController {
         statsCollectionViewHeight.constant = contentHeight
     }
     
-    private func updateFavoriteStatus() {
-        let imageName = viewModel.isFavorite ? "star.fill" : "star"
-        let image = UIImage(systemName: imageName)
-        favoriteButton.setImage(image, for: .normal)
-        favoriteButton.tintColor = viewModel.isFavorite ? .orange : .gray
+    private func initFavoriteButton() {
+        let starImage = UIImage(systemName: "star")?.withTintColor(.gray, renderingMode: .alwaysOriginal)
+        let filledStarImage = UIImage(systemName: "star.fill")?.withTintColor(.orange, renderingMode: .alwaysOriginal)
+        favoriteButton.setImage(starImage, for: .normal)
+        favoriteButton.setImage(filledStarImage, for: .selected)
     }
     
     // MARK: - IBActions
     @IBAction func favoriteAction(_ sender: UIButton) {
-        viewModel.updateFavoriteData(pokemonURL: pokemonURL)
-        updateFavoriteStatus()
+        viewModel.saveFavoritePokemon()
     }
 }
 
