@@ -11,9 +11,10 @@ class PokemonListViewModel {
     private var currentOffset = 0
     private let limit = 20
     private let apiService: APIServiceProtocol
+    private let favoriteService: FavoriteServiceProtocol
     var pokedex = [Pokedex]()
     var pokemonFavorite: [Pokedex] {
-        return FavoriteService.shared.getFavoritePokemon()
+        return favoriteService.getFavoritePokemon()
     }
     var didLoadPokemons: (() -> Void)?
     
@@ -48,8 +49,9 @@ class PokemonListViewModel {
     
     
     // MARK: - Initialization
-    init(apiService: APIServiceProtocol) {
+    init(apiService: APIServiceProtocol, favoriteService: FavoriteServiceProtocol) {
         self.apiService = apiService
+        self.favoriteService = favoriteService
     }
     
     // MARK: - Data Access

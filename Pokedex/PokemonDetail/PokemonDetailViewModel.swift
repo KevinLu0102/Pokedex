@@ -45,6 +45,9 @@ class PokemonDetailViewModel {
     
     var pokemonURL: String?
     
+    private let apiService: APIServiceProtocol
+    private let favoriteService: FavoriteServiceProtocol
+    
     // MARK: - Computed Properties
     var imageURL: URL? {
         if let urlString = pokemon?.sprites.frontDefault {
@@ -107,6 +110,11 @@ class PokemonDetailViewModel {
             return []
         }
     }
+    // MARK: - Initialization
+    init(apiService: APIServiceProtocol, favoriteService: FavoriteServiceProtocol) {
+        self.apiService = apiService
+        self.favoriteService = favoriteService
+    }
     
     // MARK: - Methods
     func getStat(index: Int) ->  PokemonStat? {
@@ -119,10 +127,10 @@ class PokemonDetailViewModel {
     
     func saveFavoritePokemon() {
         if let pokemon = pokemon, let pokemonURL = pokemonURL {
-            if FavoriteService.shared.isFavorite(pokemonId: pokemon.id) {
-                FavoriteService.shared.removeFavorite(pokemonId: pokemon.id)
+            if favoriteService.isFavorite(pokemonId: pokemon.id) {
+                favoriteService.removeFavorite(pokemonId: pokemon.id)
             } else {
-                FavoriteService.shared.addFavorite(pokemon: Pokedex(id: pokemon.id, name: pokemon.name, types: pokemon.types, imageURL: pokemon.sprites, pokemonURL: pokemonURL))
+                favoriteService.addFavorite(pokemon: Pokedex(id: pokemon.id, name: pokemon.name, types: pokemon.types, imageURL: pokemon.sprites, pokemonURL: pokemonURL))
             }
             checkIfIsFavorite()
         }
@@ -130,7 +138,7 @@ class PokemonDetailViewModel {
     
     func checkIfIsFavorite() {
         if let pokemon = pokemon{
-            isFavorite = FavoriteService.shared.isFavorite(pokemonId: pokemon.id)
+            isFavorite = favoriteService.isFavorite(pokemonId: pokemon.id)
         }
     }
     
@@ -167,7 +175,7 @@ class PokemonDetailViewModel {
     
     // MARK: - Private Methods
     private func loadPokemon(url: String, completion: @escaping (Pokemon?) -> Void) {
-        APIService.shared.callAPI(url: url) { (result: Result<Pokemon, NetworkError>) in
+        apiService.callAPI(url: url) { (result: Result<Pokemon, NetworkError>) in
             switch result {
             case .success(let success):
                 completion(success)
@@ -179,7 +187,7 @@ class PokemonDetailViewModel {
     }
     
     private func loadSpecies(url: String, completion: @escaping (Species?) -> Void) {
-        APIService.shared.callAPI(url: url) { (result: Result<Species, NetworkError>) in
+        apiService.callAPI(url: url) { (result: Result<Species, NetworkError>) in
             switch result {
             case .success(let success):
                 completion(success)
@@ -191,7 +199,7 @@ class PokemonDetailViewModel {
     }
     
     private func loadEvolution(url: String, completion: @escaping (Evolution?) -> Void) {
-        APIService.shared.callAPI(url: url) { (result: Result< Evolution, NetworkError>) in
+        apiService.callAPI(url: url) { (result: Result< Evolution, NetworkError>) in
             switch result {
             case .success(let success):
                 completion(success)

@@ -7,7 +7,14 @@
 
 import Foundation
 
-class FavoriteService {
+protocol FavoriteServiceProtocol {
+    func isFavorite(pokemonId: Int) -> Bool
+    func addFavorite(pokemon: Pokedex)
+    func removeFavorite(pokemonId: Int)
+    func getFavoritePokemon() -> [Pokedex]
+}
+
+class FavoriteService: FavoriteServiceProtocol {
     static let shared = FavoriteService()
     
     private let favoritePokemonKey = "FavoritePokemon"

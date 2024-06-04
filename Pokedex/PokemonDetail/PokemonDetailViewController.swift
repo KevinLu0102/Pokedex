@@ -20,7 +20,7 @@ class PokemonDetailViewController: UIViewController {
     @IBOutlet weak var favoriteButton: UIButton!
     
     private var loadingView: LoadingView!
-    private let viewModel = PokemonDetailViewModel()
+    private let viewModel = PokemonDetailViewModel(apiService: APIService.shared, favoriteService: FavoriteService.shared)
     var pokemonURL = ""
     
     // MARK: - View Lifecycle
